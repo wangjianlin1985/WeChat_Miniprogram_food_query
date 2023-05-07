@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.DishClassMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加菜谱类别记录 -->
+	<insert id="addDishClass" parameterType="dishClass">
+		insert into t_dishClass(className,classDesc) values 
+		(#{className},#{classDesc})
+	</insert>
+
+	<!-- 按照查询条件分页查询菜谱类别记录 -->
+	<select id="queryDishClass" resultMap="dishClassMap" >
+		select t_dishClass.* from t_dishClass ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="dishClassMap" type="dishClass">
+        <id property="classId" column="classId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有菜谱类别记录 -->
+	<select id="queryDishClassList" resultMap="dishClassMap" >
+		select t_dishClass.* from t_dishClass ${where}
+	</select>
+
+    <!-- 按照查询条件的菜谱类别记录数 -->
+	<select id="queryDishClassCount" resultType="int">
+		select count(*) from t_dishClass ${where}
+	</select>
+
+	<!-- 根据主键查询某个菜谱类别记录 -->
+	<select id="getDishClass" parameterType="int" resultMap="dishClassMap">
+		select * from t_dishClass where t_dishClass.classId = #{classId}
+	</select>
+
+	<!-- 更新菜谱类别记录 -->
+	<update id="updateDishClass" parameterType="dishClass">
+		update t_dishClass set className=#{className},classDesc=#{classDesc} where classId = #{classId}
+	</update>
+
+	<!-- 删除菜谱类别记录 -->
+	<delete id="deleteDishClass" parameterType="int">
+		delete from t_dishClass where classId=#{classId}
+	</delete>
+
+</mapper>

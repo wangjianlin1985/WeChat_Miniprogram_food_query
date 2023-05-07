@@ -1,0 +1,50 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.DishCollectMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加菜谱收藏记录 -->
+	<insert id="addDishCollect" parameterType="dishCollect">
+		insert into t_dishCollect(dishObj,userObj,collectTime) values 
+		(#{dishObj.dishId},#{userObj.user_name},#{collectTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询菜谱收藏记录 -->
+	<select id="queryDishCollect" resultMap="dishCollectMap" >
+		select t_dishCollect.* from t_dishCollect,t_dish,t_userInfo ${where} and t_dishCollect.dishObj = t_dish.dishId and t_dishCollect.userObj = t_userInfo.user_name limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="dishCollectMap" type="dishCollect">
+        <id property="collectId" column="collectId" />
+        <association property="dishObj" column="dishObj" select="com.chengxusheji.mapper.DishMapper.getDish" />
+        <association property="userObj" column="userObj" select="com.chengxusheji.mapper.UserInfoMapper.getUserInfo" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有菜谱收藏记录 -->
+	<select id="queryDishCollectList" resultMap="dishCollectMap" >
+		select t_dishCollect.* from t_dishCollect,t_dish,t_userInfo ${where} and t_dishCollect.dishObj = t_dish.dishId and t_dishCollect.userObj = t_userInfo.user_name
+	</select>
+
+    <!-- 按照查询条件的菜谱收藏记录数 -->
+	<select id="queryDishCollectCount" resultType="int">
+		select count(*) from t_dishCollect,t_dish,t_userInfo ${where} and t_dishCollect.dishObj = t_dish.dishId and t_dishCollect.userObj = t_userInfo.user_name
+	</select>
+
+	<!-- 根据主键查询某个菜谱收藏记录 -->
+	<select id="getDishCollect" parameterType="int" resultMap="dishCollectMap">
+		select * from t_dishCollect where t_dishCollect.collectId = #{collectId}
+	</select>
+
+	<!-- 更新菜谱收藏记录 -->
+	<update id="updateDishCollect" parameterType="dishCollect">
+		update t_dishCollect set dishObj=#{dishObj.dishId},userObj=#{userObj.user_name},collectTime=#{collectTime} where collectId = #{collectId}
+	</update>
+
+	<!-- 删除菜谱收藏记录 -->
+	<delete id="deleteDishCollect" parameterType="int">
+		delete from t_dishCollect where collectId=#{collectId}
+	</delete>
+
+</mapper>
